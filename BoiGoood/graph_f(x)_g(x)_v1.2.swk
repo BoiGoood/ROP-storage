@@ -1,0 +1,389 @@
+def 2F5F0 getkey_er8
+
+org 0xD730
+start:
+reset_screen:
+	mode_calc
+	pop xr0 (EF38 C8 00)
+	memzero
+	pop xr0 (EF38 D180)
+	call 203CC
+	mode_calc
+
+home:
+	pop er6 (adr set_up -2)
+	sp = er6,pop er8 (D400)
+
+start_draw:
+draw:
+	pop xr0 (adr addr_formula_error adr var_c)
+	calc_func
+	pop xr0 (adr var_d 00 00)
+	setlr
+	num_fromdigit
+	pop er2 (00 00)
+	[er8] = er2,pop xr8 (D400 D400)
+
+gex:
+	pop er2 (01 00)
+	[er8] += er2,pop xr8 (00 00 00 00)
+	setlr
+	pop er0 (C1 00)
+	er0 - er2_eq,r0 = 1|r0 = 0,rt
+	pop er2 (02 00)
+	er0 *= r2,er2 = er0,er0 += er4,rt
+	pop er2
+p_1:
+	hex A4 00
+	pop er4 (adr continue -2)
+	er0 *= r2,er2 = er0,er0 += er4,rt
+	er6 = er0,er0 = er8,pop qr8 (00 00 00 00 00 00 00 00)
+	sp = er6,pop er8
+
+continue:
+	pop xr0 (adr addr_formula_x adr var_x)
+	calc_func
+	pop xr0 (adr addr_formula_calc_pos adr var_y)
+	calc_func
+	pop xr0 
+p_2:
+	adr addr_formula_main_1
+	adr var_c
+	calc_func
+	pop xr0 (adr addr_formula_inc adr var_d)
+	calc_func
+	pop xr0 (adr addr_formula_calc_pos_main_1 adr var_c)
+	calc_func
+	pop xr0 (adr addr_formula_calc_pos_main_2 adr var_c)
+	calc_func
+	pop xr0 (adr addr_formula_calc_pos_main_3 adr var_c)
+	calc_func
+	pop xr0 (adr addr_formula_calc_pos_all D3A0)
+	calc_func
+	pop er2 (D3A0)
+	r0 = [er2]
+	setlr
+	r1 = 0,rt
+	pop er2 (F3 00)
+	er0 - er2_eq,r0 = 1|r0 = 0,rt
+	pop er2 (adr_arith [-2]restore_gex [-2]print 00)
+	pop er4 (adr print -2)
+	er0 *= r2,er2 = er0,er0 += er4,rt
+	er6 = er0,er0 = er8,pop qr8 (00 00 00 00 00 00 00 00)
+	sp = er6,pop er8
+
+print:
+	pop er0 (D3A0)
+	pop er12 (D3A0)
+	call 16082
+	call 160F8
+	line_draw
+	pop xr0 (DDD4 18 00)
+	memzero
+	render.ddd4
+	pop er6 (adr restore_gex -2)
+	sp = er6,pop er8 (adr p_1 +4784)
+
+draw_back:
+	pop er2 (A4 00)
+	[er8] = er2,pop xr8 (adr p_2 +4784 00 00)
+	pop er2 (adr addr_formula_main_2)
+	[er8] = er2,pop xr8 (D400 00 00)
+	pop er2 (00 00)
+	[er8] = er2,pop xr8 (00 00 00 00)
+	pop xr0 (adr addr_formula_error adr var_c)
+	calc_func
+	pop xr0 (adr var_d 00 00)
+	setlr
+	num_fromdigit
+
+restore_gex:
+    pop er8 (adr length_gex)
+    pop er2 (01 00)
+    [er8] = er2,pop xr8 (00 00 00 00)
+	setlr
+    DI,RT
+    pop qr0 (adr (end_draw - start_draw) adr draw +4784 adr draw adr gex -2)
+    hex 32 89
+start_gex:
+length_gex:
+    adr (end_gex - start_gex)
+	hex 00 00
+set_sp_gex:
+    sp = er6,pop er8
+
+restore:
+restore_back:
+	pop xr0 (adr var_d 00 00)
+	setlr
+	num_fromdigit
+    pop er8 (adr length_back)
+    pop er2 (01 00)
+    [er8] = er2,pop xr8 (00 00 00 00)
+	setlr
+    DI,RT
+    pop qr0 (adr (end - start) E9E0 adr reset_screen adr get_key)
+    hex 32 89
+start_back:
+length_back:
+    adr (end_back - start_back)
+	hex 00 00
+set_sp_back:
+    sp = er6,pop er8
+
+addr_formula_main_1:
+	hex 38 EF
+addr_formula_main_2:
+	hex 80 D1
+addr_formula_error:
+	adr formula_error
+addr_formula_x:
+	adr formula_x
+addr_formula_inc:
+	adr formula_inc
+addr_formula_calc_pos_main_1:
+	adr formula_calc_pos_main_1
+addr_formula_calc_pos_main_2:
+	adr formula_calc_pos_main_2
+addr_formula_calc_pos_main_3:
+	adr formula_calc_pos_main_3
+addr_formula_calc_pos:
+	adr formula_calc_pos
+addr_formula_calc_pos_all:
+	adr formula_calc_pos_all
+
+formula_error:
+	hex C8 00
+formula_x:
+	hex 45 A8 42 A9 39 36 A7 42 A7 46 00
+formula_inc:
+	hex 45 A6 31 00
+formula_calc_pos_main_1:
+	hex 83 33 32 A7 60 44 A6 47 D0 A9 43 A8 33 32 D0 00
+formula_calc_pos_main_2:
+	hex 60 68 44 D0 A7 68 36 34 A7 44 D0 A6 36 34 D0 C8 32 00
+formula_calc_pos_main_3:
+	hex 44 A8 32 35 36 A6 45 00
+formula_calc_pos:
+	hex 44 00
+formula_calc_pos_all:
+	hex 49 A6 44 A8 36 35 35 33 36 00 00
+end_draw:
+end_gex:
+
+get_key:
+	adr key
+	pop er14 (adr pad)
+	getkey_er8
+pad:
+	hex 00 00 00 00 00 00 00 00
+	adr table -10
+	adr table -10
+
+detect_key:
+	setlr
+	call 17CA6
+	pop er0
+key:
+	hex 00 00
+	call 09C20
+	call 1C64A
+	sp = er6,pop er8
+
+key_left:
+	pop qr0 (adr addr_formula_graph_left adr var_e 00 00 adr calc -2)
+	sp = er6,pop er8
+
+key_right:
+	pop qr0 (adr addr_formula_graph_right adr var_e 00 00 adr calc -2)
+	sp = er6,pop er8
+
+key_up:
+	pop qr0 (adr addr_formula_graph_up adr var_f 00 00 adr calc -2)
+	sp = er6,pop er8
+
+key_down:
+	pop qr0 (adr addr_formula_graph_down adr var_f 00 00 adr calc -2)
+	sp = er6,pop er8
+
+key_plus:
+	pop xr0 (adr addr_formula_graph_zoom_in_A adr var_a)
+	calc_func
+	pop qr0 (adr addr_formula_graph_zoom_in_B adr var_b 00 00 adr calc -2)
+	sp = er6,pop er8
+
+key_minus:
+	pop xr0 (adr addr_formula_graph_zoom_out_A adr var_a)
+	calc_func
+	pop qr0 (adr addr_formula_graph_zoom_out_B adr var_b 00 00 adr calc -2)
+	sp = er6,pop er8
+
+key_ac:
+	pop er6 (adr reset_screen -2)
+	sp = er6,pop er8
+
+end_back:
+end:
+
+calc:
+	calc_func
+set_up:
+	pop xr0 (D730 E9E0)
+	BL memcpy,pop er0 (pr_length)
+	pop xr0 (D137 08 00)
+	[er0] = r2
+	setlr
+	buffer_clear
+	pop xr0 (adr addr_formula_line_x_1 adr var_c)
+	calc_func
+	pop xr0 (adr addr_formula_line_x_2 D3B0)
+	calc_func
+	pop er0 (D3B0)
+	pop er12 (D3B0)
+	call 16082
+	call 160F8
+	line_draw
+	pop xr0 (adr addr_formula_line_y_1 adr var_m)
+	calc_func
+	pop xr0 (adr addr_formula_line_y_2 D3C0)
+	calc_func
+	pop er0 (D3C0)
+	pop er12 (D3C0)
+	call 16082
+	call 160F8
+	line_draw
+	pop xr0 (adr addr_formula_char_x D3D0)
+	calc_func
+	pop er0 (D3D0)
+	pop er12 (D3D0)
+	call 16082
+	call 160F8
+	pop er2 (10 00)
+	char_print_1byte
+	pop xr0 (adr addr_formula_char_y D3E0)
+	calc_func
+	pop er0 (D3E0)
+	pop er12 (D3E0)
+	call 16082
+	call 160F8
+	pop er2 (11 00)
+	char_print_1byte
+	pop xr0 (adr addr_formula_char_0 D3F0)
+	calc_func
+	pop er0 (D3F0)
+	pop er12 (D3F0)
+	call 16082
+	call 160F8
+	pop er2 (30 00)
+	char_print_1byte
+	render.ddd4
+
+restore_cont:
+    pop er8 (adr length_cont)
+    pop er2 (01 00)
+    [er8] = er2,pop xr8 (adr p_1 +4784 00 00)
+	pop er2 (68 00)
+	[er8] = er2,pop xr8 (adr p_2 +4784 00 00)
+	pop er2 (adr addr_formula_main_1)
+	[er8] = er2,pop xr8 (00 00 00 00)
+    pop qr0 (pr_length E9E0 adr reset_screen adr draw -2)
+    hex 32 89
+start_cont:
+length_cont:
+    adr (end_cont - start_cont)
+	hex 00 00
+set_sp_cont:
+    sp = er6,pop er8
+
+addr_formula_line_x_1:
+	adr formula_line_x_1
+addr_formula_line_x_2:
+	adr formula_line_x_2
+addr_formula_line_y_1:
+	adr formula_line_y_1
+addr_formula_line_y_2:
+	adr formula_line_y_2
+
+addr_formula_char_x:
+	adr formula_char_x
+addr_formula_char_y:
+	adr formula_char_y
+addr_formula_char_0:
+	adr formula_char_0
+
+addr_formula_graph_left:
+	adr formula_graph_left
+addr_formula_graph_right:
+	adr formula_graph_right
+addr_formula_graph_up:
+	adr formula_graph_up
+addr_formula_graph_down:
+	adr formula_graph_down
+
+addr_formula_graph_zoom_in_A:
+	adr formula_graph_zoom_in_A
+addr_formula_graph_zoom_in_B:
+	adr formula_graph_zoom_in_B
+addr_formula_graph_zoom_out_A:
+	adr formula_graph_zoom_out_A
+addr_formula_graph_zoom_out_B:
+	adr formula_graph_zoom_out_B
+
+formula_line_x_1:
+	hex 83 33 32 A7 47 A9 43 A8 33 32 D0 00
+formula_line_x_2:
+	hex 44 A8 31 36 37 37 37 34 37 32 A6 31 39 32 00
+formula_line_y_1:
+	hex 83 39 36 A6 46 A9 42 A8 39 36 D0 00
+formula_line_y_2:
+	hex 40 A8 36 35 35 33 37 A6 31 36 33 38 34 00
+
+formula_char_x:
+	hex 32 35 36 A8 60 44 A7 38 D0 A6 31 38 34 00
+formula_char_y:
+	hex 40 A6 32 35 37 00
+formula_char_0:
+	hex 32 35 36 A8 60 44 A6 31 D0 A6 40 A7 38 00
+
+formula_graph_left:
+	hex 46 A6 42 A9 34 00
+formula_graph_right:
+	hex 46 A7 42 A9 34 00
+formula_graph_up:
+	hex 47 A7 43 A9 34 00
+formula_graph_down:
+	hex 47 A6 43 A9 34 00
+
+formula_graph_zoom_in_A:
+	hex 42 A9 32 00
+formula_graph_zoom_in_B:
+	hex 43 A9 32 00
+formula_graph_zoom_out_A:
+	hex 42 A8 32 00
+formula_graph_zoom_out_B:
+	hex 43 A8 32 00
+
+	hex 00
+end_cont:
+
+
+table:
+	hex 40 04
+	adr key_left -2
+	hex 80 08
+	adr key_right -2
+	hex 80 04
+	adr key_up -2
+	hex 40 08
+	adr key_down -2
+	hex 01 08
+	adr key_plus -2
+	hex 01 10
+	adr key_minus -2
+	hex 04 10
+	adr key_ac -2
+	hex 00 00
+	adr restore -2
+
+;launcher:
+;31 32 33 34 35 36 37 38 39 30 31 32 33 34 35 36 37 38 39 30 31 32 33 34 35 36 37 38 39 30 31 32 33 34 35 36 37 38 39 30 31 32 33 34 35 36 37 38 A8 9F 30 30 E0 A0 30 30 A5 30 31 30 42 05 E0 E9 30 D7 2E D7 32 89 31 30 30 30 74 1F 32 30
